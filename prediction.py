@@ -7,7 +7,7 @@ from sklearn.metrics import classification_report
 
 
 
-# single logistic regression
+## single logistic regression
 
 # load data
 def load_data(path, transpose=True):
@@ -26,10 +26,9 @@ def load_data(path, transpose=True):
 
     return X, y
 
-X, y = load_data('ex3data1.mat')
-
-print(X.shape)
-print(y.shape)
+# X, y = load_data('ex3data1.mat')
+# print(X.shape)
+# print(y.shape)
 
 
 
@@ -42,13 +41,12 @@ def plot_an_image(image):
     plt.xticks(np.array([]))  # just get rid of ticks
     plt.yticks(np.array([]))
 
-
-pick_one = np.random.randint(0, 5000)
-plot_an_image(X[pick_one, :])
+# pick_one = np.random.randint(0, 5000)
+# plot_an_image(X[pick_one, :])
 # plot_an_image(raw_X[pick_one, :])
 
-plt.show()
-print('this should be {}'.format(y[pick_one]))
+# plt.show()
+# print('this should be {}'.format(y[pick_one]))
 
 def plot_100_image(X):
     """ sample 100 image and show them
@@ -70,37 +68,34 @@ def plot_100_image(X):
                                    cmap=matplotlib.cm.binary)
             plt.xticks(np.array([]))
             plt.yticks(np.array([]))
-            #绘图函数，画100张图片
+            #plot function, generating 100 random pics
 
-plot_100_image(X)
-plt.show()
-
-raw_X, raw_y = load_data('ex3data1.mat')
-print(raw_X.shape)
-print(raw_y.shape)
+# plot_100_image(X)
+# plt.show()
+#
+# raw_X, raw_y = load_data('ex3data1.mat')
+# print(raw_X.shape)
+# print(raw_y.shape)
 
 
 # data preparation
 # add intercept=1 for x0
-X = np.insert(raw_X, 0, values=np.ones(raw_X.shape[0]), axis=1)#插入了第一列（全部为1）
-X.shape
+# X = np.insert(raw_X, 0, values=np.ones(raw_X.shape[0]), axis=1) #insert a col with value 1
 
 
-# y have 10 categories here. 1..10, they represent digit 0 as category 10 because matlab index start at 1
-# I'll ditit 0, index 0 again
-y_matrix = []
+## y have 10 categories here. 1..10, they represent digit 0 as category 10 because matlab index start at 1
+## I'll ditit 0, index 0 again
+# y_matrix = []
 
-for k in range(1, 11):
-    y_matrix.append((raw_y == k).astype(int))
+# for k in range(1, 11):
+#     y_matrix.append((raw_y == k).astype(int))
 
-# last one is k==10, it's digit 0, bring it to the first position，最后一列k=10，都是0，把最后一列放到第一列
-y_matrix = [y_matrix[-1]] + y_matrix[:-1]
-y = np.array(y_matrix)
+## last one is k==10, it's digit 0, bring it to the first position
+# y_matrix = [y_matrix[-1]] + y_matrix[:-1]
+# y = np.array(y_matrix)
 
-y.shape
-
-# 扩展 5000*1 到 5000*10
-#     比如 y=10 -> [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]: ndarray
+# expand 5000*1 to 5000*10
+#     e.g. y=10 -> [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]: ndarray
 #     """
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
@@ -162,75 +157,156 @@ def predict(x, theta):
     return (prob >= 0.5).astype(int)
 
 
-t0 = logistic_regression(X, y[0])
-t1 = logistic_regression(X, y[1])
-
-
-print(t0.shape)
-y_pred = predict(X, t0)
-y_pred1 = predict(X, t1)
-print('Accuracy={}'.format(np.mean(y[0] == y_pred)))
-print('Accuracy={}'.format(np.mean(y[1] == y_pred1)))
-
-# vectorized logistic regression
-k_theta = np.array([logistic_regression(X, y[k]) for k in range(10)])
-print(k_theta.shape)
-
-prob_matrix = sigmoid(X @ k_theta.T)
-
-prob_matrix = sigmoid(X @ k_theta.T)
-prob_matrix.shape
-np.set_printoptions(suppress=True)
-prob_matrix
-
-y_pred = np.argmax(prob_matrix, axis=1)
-y_answer = raw_y.copy()
-y_answer[y_answer==10] = 0
-
-print(classification_report(y_answer, y_pred))
+# t0 = logistic_regression(X, y[0])
+# t1 = logistic_regression(X, y[1])
+#
+#
+# print(t0.shape)
+# y_pred = predict(X, t0)
+# y_pred1 = predict(X, t1)
+# print('Accuracy={}'.format(np.mean(y[0] == y_pred)))
+# print('Accuracy={}'.format(np.mean(y[1] == y_pred1)))
+#
+# # vectorized logistic regression
+# k_theta = np.array([logistic_regression(X, y[k]) for k in range(10)])
+# print(k_theta.shape)
+#
+# prob_matrix = sigmoid(X @ k_theta.T)
+#
+# prob_matrix = sigmoid(X @ k_theta.T)
+# prob_matrix.shape
+# np.set_printoptions(suppress=True)
+# prob_matrix
+#
+# y_pred = np.argmax(prob_matrix, axis=1)
+# y_answer = raw_y.copy()
+# y_answer[y_answer==10] = 0
+#
+# print(classification_report(y_answer, y_pred))
 
 # DNN model
 def load_weight(path):
     data = sio.loadmat(path)
     return data['Theta1'], data['Theta2']
-
-theta1, theta2 = load_weight('ex3weights.mat')
-
-theta1.shape, theta2.shape
-
-X, y = load_data('ex3data1.mat',transpose=False)
-
-X = np.insert(X, 0, values=np.ones(X.shape[0]), axis=1)  # intercept
-
-X.shape, y.shape
-
-a1 = X
-
-z2 = a1 @ theta1.T # (5000, 401) @ (25,401).T = (5000, 25)
-z2.shape
-z2 = np.insert(z2, 0, values=np.ones(z2.shape[0]), axis=1)
-
-a2 = sigmoid(z2)
-a2.shape
-z3 = a2 @ theta2.T
-z3.shape
-
-a3 = sigmoid(z3)
-a3
-
-y_pred = np.argmax(a3, axis=1) + 1  # numpy is 0 base index, +1 for matlab convention，返回沿轴axis最大值的索引，axis=1代表行
-y_pred.shape
-
-print(classification_report(y, y_pred))
+#
+# theta1, theta2 = load_weight('ex3weights.mat')
+#
+# theta1.shape, theta2.shape
+#
+# X, y = load_data('ex3data1.mat',transpose=False)
+#
+# X = np.insert(X, 0, values=np.ones(X.shape[0]), axis=1)  # intercept
+#
+# X.shape, y.shape
+#
+# a1 = X
+#
+# z2 = a1 @ theta1.T # (5000, 401) @ (25,401).T = (5000, 25)
+# z2.shape
+# z2 = np.insert(z2, 0, values=np.ones(z2.shape[0]), axis=1)
+#
+# a2 = sigmoid(z2)
+# a2.shape
+# z3 = a2 @ theta2.T
+# z3.shape
+#
+# a3 = sigmoid(z3)
+# a3
+#
+# y_pred = np.argmax(a3, axis=1) + 1  # numpy is 0 base index, +1 for matlab convention，返回沿轴axis最大值的索引，axis=1代表行
+# y_pred.shape
+#
+# print(classification_report(y, y_pred))
 
 # logistic regression
 if __name__ == '__main__':
-    raw_X, raw_y = load_data('ex3data1.mat')
-    # plot_100_image(raw_X)
-    # plt.show()
+    # plot 100 random pics from dataset, total 5,000 pics
+    print('plot 100 random pics from dataset, total 5,000 pics')
+    X, y = load_data('ex3data1.mat')
+    plot_100_image(X)
+    plt.show()
 
-#  DNN
-# if __name__ == '__main__':
+    # load data
+    raw_X, raw_y = load_data('ex3data1.mat')
+
+    # logistic regression
+    print('logistic regression modeling')
+    X = np.insert(raw_X, 0, values=np.ones(raw_X.shape[0]), axis=1) #insert a col with value 1
+
+    # y have 10 categories here. 1..10, they represent digit 0 as category 10 because matlab index start at 1
+    # I'll ditit 0, index 0 again
+    y_matrix = []
+
+    for k in range(1, 11):
+        y_matrix.append((raw_y == k).astype(int))
+
+    # last one is k==10, it's digit 0, bring it to the first position
+    y_matrix = [y_matrix[-1]] + y_matrix[:-1]
+    y = np.array(y_matrix)
+    # expand y.shape from 5000*1 to 5000*10
+    #     e.g. y=10 -> [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]: ndarray
+    #     """
+
+    k_theta = np.array([logistic_regression(X, y[k]) for k in range(10)])
+    # print(k_theta.shape)
+
+    prob_matrix = sigmoid(X @ k_theta.T)
+    np.set_printoptions(suppress=True)
+    # take the position which has largest probability for each row
+    y_pred = np.argmax(prob_matrix, axis=1)
+
+    y_answer = raw_y.copy()
+    # digit 0 represent 10
+    y_answer[y_answer == 10] = 0
+
+    # output the accuracy report of logistic regression model
+    print('Logistic regression accuracy report:')
+    print(classification_report(y_answer, y_pred))
+    print('Accuracy Matrix={}'.format(np.mean(y_answer == y_pred)))
+    lr_accuracy = np.mean(y_answer == y_pred)
+
+
+    print('\n\nDNN modeling with 2 layers, 25 and 10 nodes respectively')
+    # load layers weights, 2 layers with 25 and 10 nodes respectively
+    theta1, theta2 = load_weight('ex3weights.mat')
+
+    print(f'theta of layer 1: {theta1.shape}\ntheta of layer 2: {theta2.shape}')
+    # load data
+    X_dnn, y_dnn = load_data('ex3data1.mat', transpose=False)
+
+    X_dnn = np.insert(X_dnn, 0, values=np.ones(X_dnn.shape[0]), axis=1)  # intercept col with value 1
+    # X.shape, y.shape
+
+    a1 = X_dnn
+    z2 = a1 @ theta1.T  # (5000, 401) @ (25,401).T = (5000, 25)
+    # z2.shape
+    z2 = np.insert(z2, 0, values=np.ones(z2.shape[0]), axis=1)
+    a2 = sigmoid(z2)
+    # a2.shape
+    z3 = a2 @ theta2.T
+    # z3.shape
+    a3 = sigmoid(z3)
+    # a3
+
+    y_pred_dnn = np.argmax(a3, axis=1) + 1  # numpy is 0 base index, +1 for matlab convention
+    # y_pred.shape
+    print('DNN accuracy report:')
+    print(classification_report(y_dnn, y_pred_dnn))
+    print('Accuracy Matrix={}'.format(np.mean(y_dnn == y_pred_dnn)))
+    dnn_accuracy = np.mean(y_dnn == y_pred_dnn)
+
+    print('\n\nSummary:')
+    if dnn_accuracy > lr_accuracy:
+        print(f'The best performance model: DNN\nAccuracy: {dnn_accuracy}')
+    else:
+        print(f'The best performance model: logistic regression\nAccuracy: {lr_accuracy}')
+
+
+
+
+
+
+
 
 
 
